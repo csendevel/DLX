@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +14,7 @@
 //new - malloc(sizeof(type))
 //delete - free()
 
+int max_col_num, max_row_num;
 bool used[60][60]; //array for chaking component
 char board[60][60];
 char tmp[60];
@@ -152,9 +153,10 @@ bool DLX(int depth) {
 			} while (ptr != ans[i]);
 		}
 
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 16; j++)
-				printf("%4d ", visual[i][j]);
+		for (int i = 0; i < max_row_num; i++) {
+			for (int j = 0; j < max_col_num; j++) {
+				printf("%2d ", visual[i][j]);
+			}
 			printf("\n");
 		}
 		exit(0);
@@ -385,12 +387,24 @@ int main() {
 
 	freopen("test.txt", "r", file_stream);
 #else
-	file_stream = fopen("test.txt", "r");
+	file_stream = fopen("test2.txt", "r");
 #endif // TGEN
 
 	int c = 0;
-	while (fgets(board[c], 62, file_stream)) c++;
+
+	char sym;
+	int ptr = 0;
+	while ((sym = fgetc(file_stream)) != EOF) {
+		if (sym == '\n') {
+			c++;
+			if (ptr > max_col_num) max_col_num = ptr;
+			ptr = 0;
+			continue;
+		}
+		board[c][ptr] = sym; ptr++;
+	}
 	fclose(file_stream);
+	max_row_num = c + 1;
 
 	c = 0;
 	for (int i = 0; i < 60; i++) {
@@ -418,4 +432,5 @@ int main() {
 		ans[i] = malloc(sizeof(Node));
 
 	DLX(0);
+	printf("There are no soultions\n");
 }
